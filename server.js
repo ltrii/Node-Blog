@@ -2,9 +2,13 @@ const express = require('express');
 
 const mainRouter = require('./routers/routes');
 
+const customMiddleware = require('./middleware');
+
 const server = express();
 
 server.use(express.json());
+
+server.use(customMiddleware.capitalize);
 
 server.use('/api/', mainRouter);
 

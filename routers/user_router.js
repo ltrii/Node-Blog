@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
             name: req.body.name
         };
         let insUser = await db.insert(newUser);
-        let theUser = await db.findById(insUser.id);
+        let theUser = await db.getById(insUser.id);
         res.status(201).json(theUser);
     } catch(error) {
         res.status(500).json({error: "There was an error while saving the user to the database"});
