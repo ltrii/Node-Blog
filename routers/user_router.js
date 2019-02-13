@@ -28,4 +28,54 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.post('/', async (req, res) => {
+    if(!req.body.name) {
+        res.status(400).json({error: "Please provide a name for the user."});
+        return;
+    }
+    try {
+        const newUser = {
+            name: req.body.name
+        };
+        let insUser = await db.insert(newUser);
+        let theUser = await db.findById(insUser.id);
+        res.status(201).json(theUser);
+    } catch(error) {
+        res.status(500).json({error: "There was an error while saving the user to the database"});
+    }
+});
+
+router.delete('/:id', async (req, res) => {
+    try {
+      const count = await db.remove(req.params.id);
+      if (count > 0) {
+        res.status(200).json({ message: 'The user has been nuked' });
+      } else {
+        res.status(404).json({ message: 'The user could not be found' });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: 'Error removing the user',
+      });
+    }
+});
+
+router.get('/:id/posts', async (req, res) => {
+    try {
+        let posts = await db.getUserPosts(req.params.id);
+        if(posts.length) {
+            res.status(200).json(posts);
+        } else {
+            res.status(404).json({error: true, message: "No posts found for this user"});
+        }
+    } catch(error) {
+        console.log(error);
+        res.status(500).json({error: true, message: "We are unable to find any posts at this time."})
+    }
+});
+
+
+
+
 module.exports = router;
